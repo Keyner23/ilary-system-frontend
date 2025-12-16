@@ -1,11 +1,36 @@
+import type { Coder } from './coder'
+
 export interface CreateJobApplicationDto {
     coderId: string;
-    companyId: string;
+    jobId: string;
+}
+
+export interface ApplicationStatus {
+    id: string;
+    name: string;
+    description: string;
+    color: string;
+    order: number;
+    created: string;
 }
 
 export interface JobApplication {
-    id: string;
+    id: number;
     coderId: string;
-    companyId: string;
-    // Add other fields if returned by backend
+    coder?: Coder;
+    jobId: string;
+    job?: {
+        id: string;
+        title: string;
+        location: string;
+        salary: number;
+        company?: {
+            id: string;
+            name: string;
+        };
+    };
+    statusId: string;
+    status?: ApplicationStatus;
+    created: string;
+    updated: string;
 }

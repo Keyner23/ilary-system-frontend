@@ -28,8 +28,14 @@ const router = createRouter({
     {
       path: '/jobs',
       name: 'jobs',
-      component: () => import('@/pages/JobsView.vue'),
+      component: () => import('@/pages/JobList.vue'),
       meta: { title: 'Explorar Empleos - Ilary System' }
+    },
+    {
+      path: '/company/jobs',
+      name: 'company-jobs',
+      component: () => import('@/pages/JobManagement.vue'),
+      meta: { title: 'Gestionar Ofertas - Ilary System', requiresAuth: true }
     },
     {
       path: '/jobs/:id',

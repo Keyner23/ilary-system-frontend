@@ -1,12 +1,13 @@
 import { apiClient } from '@/config/api'
 import type { Job, CreateJobDto, JobFilters } from '@/types/job'
+import type { JobApplication } from '@/types/jobApplication'
 
 export const jobsService = {
     /**
      * Get all jobs with optional filters
      */
     async getAll(filters?: JobFilters): Promise<Job[]> {
-        const response = await apiClient.get<Job[]>('/jobs', { params: filters })
+        const response = await apiClient.get<Job[]>('/Job', { params: filters })
         return response.data
     },
 
@@ -14,7 +15,7 @@ export const jobsService = {
      * Get a single job by ID
      */
     async getById(id: string): Promise<Job> {
-        const response = await apiClient.get<Job>(`/jobs/${id}`)
+        const response = await apiClient.get<Job>(`/Job/${id}`)
         return response.data
     },
 
@@ -22,7 +23,7 @@ export const jobsService = {
      * Create a new job (recruiter only)
      */
     async create(data: CreateJobDto): Promise<Job> {
-        const response = await apiClient.post<Job>('/jobs', data)
+        const response = await apiClient.post<Job>('/Job', data)
         return response.data
     },
 
@@ -30,7 +31,7 @@ export const jobsService = {
      * Update a job (recruiter only)
      */
     async update(id: string, data: Partial<CreateJobDto>): Promise<Job> {
-        const response = await apiClient.put<Job>(`/jobs/${id}`, data)
+        const response = await apiClient.put<Job>(`/Job/${id}`, data)
         return response.data
     },
 
@@ -38,31 +39,56 @@ export const jobsService = {
      * Delete a job (recruiter only)
      */
     async delete(id: string): Promise<void> {
-        await apiClient.delete(`/jobs/${id}`)
+        await apiClient.delete(`/Job/${id}`)
     },
 
     /**
      * Apply to a job (candidate only)
      */
-    async apply(jobId: string, coverLetter?: string): Promise<void> {
-        await apiClient.post(`/jobs/${jobId}/apply`, { coverLetter })
+    /**
+     * Apply to a job (candidate only)
+     */
+    async apply(jobId: string, coderId: string): Promise<void> {
+        await apiClient.post('/JobApplication', { jobId, coderId })
     },
 
     /**
-     * Get featured jobs
+     * Get jobs by company
+     */
+    async getByCompany(companyId: string): Promise<Job[]> {
+        const response = await apiClient.get<Job[]>(`/Job/company/${companyId}`)
+        return response.data
+    },
+
+    /**
+     * Get applicants for a job
+     */
+    async getApplicants(jobId: string): Promise<JobApplication[]> {
+        const response = await apiClient.get<JobApplication[]>(`/JobApplication/job/${jobId}`)
+        return response.data
+    },
+
+    /**
+     * Get applications for a coder
+     */
+    async getMyApplications(coderId: string): Promise<JobApplication[]> {
+        const response = await apiClient.get<JobApplication[]>(`/JobApplication/coder/${coderId}`)
+        return response.data
+    },
+
+    /**
+     * Get featured jobs (placeholder)
      */
     async getFeatured(): Promise<Job[]> {
-        const response = await apiClient.get<Job[]>('/jobs/featured')
-        return response.data
+        // For now, just return all jobs
+        return this.getAll()
     },
 
     /**
-     * Search jobs
+     * Search jobs (placeholder)
      */
     async search(query: string): Promise<Job[]> {
-        const response = await apiClient.get<Job[]>('/jobs/search', {
-            params: { q: query }
-        })
-        return response.data
+        // For now, just return all jobs
+        return this.getAll()
     }
 }

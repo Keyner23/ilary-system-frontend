@@ -36,8 +36,8 @@ export const useAuthStore = defineStore('auth', () => {
     // Computed
     const isAuthenticated = computed(() => !!token.value && !!user.value)
     const isAdmin = computed(() => user.value?.role === 'admin')
-    const isRecruiter = computed(() => user.value?.role === 'recruiter')
-    const isCandidate = computed(() => user.value?.role === 'candidate')
+    const isRecruiter = computed(() => user.value?.role === 'company' || user.value?.role === 'recruiter')
+    const isCandidate = computed(() => user.value?.role === 'coder' || user.value?.role === 'candidate')
 
     // Initialize from localStorage
     const initAuth = () => {
@@ -73,7 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
                 error.value = `Error ${err.response.status}: ${err.response.data?.message || err.message}`;
             } else if (err.request) {
                 // Request was made but no response received
-                error.value = 'No response from server. Check if backend is running and CORS is configured.';
+                error.value = `No response from server. (${err.message})`;
             } else {
                 // Something happened in setting up the request
                 error.value = `Request error: ${err.message}`;

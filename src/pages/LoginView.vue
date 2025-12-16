@@ -149,7 +149,11 @@ const showPassword = ref(false)
 const handleLogin = async () => {
   const success = await authStore.login(formData.value)
   if (success) {
-    router.push('/')
+    if (authStore.isRecruiter) {
+      router.push('/company/jobs')
+    } else {
+      router.push('/')
+    }
   }
 }
 </script>

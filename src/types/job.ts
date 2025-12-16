@@ -1,28 +1,31 @@
 export interface CreateJobDto {
     title: string
     description: string
-    company: string
+    salary: number
     location: string
-    type: string
-    salary: string
-    skills: string[]
-    requirements: string[]
-    benefits: string[]
+    companyId: string
 }
 
-export interface Job extends CreateJobDto {
+export interface Job {
     id: string
-    postedAt: string
-    expiresAt: string
-    isActive: boolean
+    title: string
+    description: string
+    salary: number
+    location: string
+    created: string
+    updated: string
+    companyId: string
+    company?: {
+        id: string
+        name: string
+        email: string
+        description: string
+    }
 }
 
 export interface JobFilters {
     search?: string
-    type?: string
     location?: string
-    experience?: string
-    skills?: string[]
     salaryMin?: number
     salaryMax?: number
 }

@@ -20,26 +20,43 @@
 
       <!-- Desktop Navigation -->
       <nav class="navbar-nav desktop-nav">
-        <router-link to="/jobs" class="nav-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-          </svg>
-          <span>Empleos</span>
-        </router-link>
-        <router-link to="/companies" class="nav-link">
+        <!-- Common Links -->
+        <router-link to="/" class="nav-link">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
-          <span>Empresas</span>
+          <span>Inicio</span>
         </router-link>
-        <router-link v-if="isAuthenticated && isCandidate" to="/applications" class="nav-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-          <span>Mis Postulaciones</span>
-        </router-link>
+
+        <!-- Candidate Links -->
+        <template v-if="!isAuthenticated || isCandidate">
+          <router-link to="/jobs" class="nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Explorar Empleos</span>
+          </router-link>
+          <router-link v-if="isAuthenticated" to="/applications" class="nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <span>Mis Postulaciones</span>
+          </router-link>
+        </template>
+
+        <!-- Recruiter Links -->
+        <template v-if="isAuthenticated && isRecruiter">
+          <router-link to="/company/jobs" class="nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Gestionar Ofertas</span>
+          </router-link>
+        </template>
       </nav>
 
       <!-- Right Section -->
@@ -172,7 +189,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
 
-const { user, isAuthenticated, isCandidate } = storeToRefs(authStore)
+const { user, isAuthenticated, isCandidate, isRecruiter } = storeToRefs(authStore)
 const { isDark } = storeToRefs(themeStore)
 
 const isUserMenuOpen = ref(false)
