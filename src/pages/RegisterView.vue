@@ -93,9 +93,34 @@
             <div class="form-group">
               <label for="role" class="form-label">Soy un</label>
               <select id="role" v-model="formData.role" class="form-select" required>
-                <option value="candidate">Candidato</option>
-                <option value="recruiter">Reclutador</option>
+                <option value="candidate">Candidato (Coder)</option>
+                <option value="recruiter">Empresa</option>
               </select>
+            </div>
+
+            <!-- Coder Fields -->
+            <div v-if="formData.role === 'candidate'">
+                <div class="form-group">
+                  <label for="document" class="form-label">Documento de Identidad</label>
+                  <input id="document" v-model="formData.document" type="text" class="form-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="phone" class="form-label">Teléfono</label>
+                  <input id="phone" v-model="formData.phoneNumber" type="tel" class="form-input" required />
+                </div>
+            </div>
+
+            <!-- Company Fields -->
+            <div v-if="formData.role === 'recruiter'">
+                <div class="form-group">
+                  <label for="nit" class="form-label">NIT</label>
+                  <input id="nit" v-model="formData.nit" type="text" class="form-input" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description" class="form-label">Descripción</label>
+              <textarea id="description" v-model="formData.description" class="form-input" rows="3"></textarea>
             </div>
 
             <div v-if="error" class="alert alert-error">
@@ -142,7 +167,11 @@ const formData = ref({
   name: '',
   email: '',
   password: '',
-  role: 'candidate'
+  role: 'candidate',
+  document: '',
+  phoneNumber: '',
+  description: '',
+  nit: ''
 })
 
 const showPassword = ref(false)

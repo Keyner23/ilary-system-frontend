@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import RegisterView from '@/views/RegisterView.vue'
+import HomeView from '@/pages/HomeView.vue'
+import LoginView from '@/pages/LoginView.vue'
+import RegisterView from '@/pages/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,43 +28,43 @@ const router = createRouter({
     {
       path: '/jobs',
       name: 'jobs',
-      component: () => import('@/views/JobsView.vue'),
+      component: () => import('@/pages/JobsView.vue'),
       meta: { title: 'Explorar Empleos - Ilary System' }
     },
     {
       path: '/jobs/:id',
       name: 'job-detail',
-      component: () => import('@/views/JobDetailView.vue'),
+      component: () => import('@/pages/JobDetailView.vue'),
       meta: { title: 'Detalles del Empleo - Ilary System' }
     },
     {
       path: '/companies',
       name: 'companies',
-      component: () => import('@/views/CompaniesView.vue'),
+      component: () => import('@/pages/CompaniesView.vue'),
       meta: { title: 'Empresas - Ilary System' }
     },
     {
       path: '/applications',
       name: 'applications',
-      component: () => import('@/views/ApplicationsView.vue'),
+      component: () => import('@/pages/ApplicationsView.vue'),
       meta: { title: 'Mis Postulaciones - Ilary System', requiresAuth: true }
     },
     {
       path: '/profile',
       name: 'profile',
-      component: () => import('@/views/ProfileView.vue'),
+      component: () => import('@/pages/ProfileView.vue'),
       meta: { title: 'Mi Perfil - Ilary System', requiresAuth: true }
     },
     {
       path: '/settings',
       name: 'settings',
-      component: () => import('@/views/SettingsView.vue'),
+      component: () => import('@/pages/SettingsView.vue'),
       meta: { title: 'Configuración - Ilary System', requiresAuth: true }
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('@/views/NotFoundView.vue'),
+      component: () => import('@/pages/NotFoundView.vue'),
       meta: { title: '404 - Página No Encontrada' }
     }
   ],
