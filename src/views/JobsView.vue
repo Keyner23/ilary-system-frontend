@@ -120,7 +120,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { supabase } from '@/config/supabase'
 
 interface Job {
   id: string
@@ -131,7 +132,8 @@ interface Job {
   description: string
   skills: string[]
   salary: string
-  postedAt: string
+  created_at: string
+  postedAt?: string // Campo calculado para visualización
 }
 
 const isLoading = ref(false)
@@ -143,42 +145,43 @@ const filters = ref({
   experience: ''
 })
 
-// Mock data - Replace with API call
-const jobs = ref<Job[]>([
-  {
-    id: '1',
-    title: 'Senior Frontend Developer',
-    company: 'Tech Corp',
-    location: 'Remote',
-    type: 'Full-time',
-    description: 'We are looking for an experienced Frontend Developer to join our team and build amazing user experiences.',
-    skills: ['Vue.js', 'TypeScript', 'CSS'],
-    salary: '$80,000 - $120,000',
-    postedAt: '2 days ago'
-  },
-  {
-    id: '2',
-    title: 'UI/UX Designer',
-    company: 'Design Studio',
-    location: 'New York, NY',
-    type: 'Full-time',
-    description: 'Join our creative team to design beautiful and intuitive user interfaces for web and mobile applications.',
-    skills: ['Figma', 'Adobe XD', 'Prototyping'],
-    salary: '$70,000 - $100,000',
-    postedAt: '1 week ago'
-  },
-  {
-    id: '3',
-    title: 'Data Analyst',
-    company: 'Analytics Inc',
-    location: 'Hybrid',
-    type: 'Full-time',
-    description: 'Analyze complex datasets and provide actionable insights to drive business decisions.',
-    skills: ['Python', 'SQL', 'Tableau'],
-    salary: '$75,000 - $110,000',
-    postedAt: '3 days ago'
+const jobs = ref<Job[]>([])
+const error = ref<string | null>(null)
+
+// Fetch jobs from Supabase
+const fetchJobs = async () => {
+  isLoading.value = true
+  error.value = null
+  
+  try {
+    // Consulta a Supabase - Tabla 'jobs'
+    // Asegúrate de que tu tabla en Supabase se llame 'jobs'
+    const { data, error: supabaseError } = await supabase
+      .from('jobs')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (supabaseError) throw supabaseError
+
+    if (data) {
+      jobs.value = data.map(job => ({
+        ...job,
+        // Mapeo de campos si la DB tiene nombres diferentes o para formatear
+        // Asumimos que la DB tiene columnas similares, si no, ajustaremos aquí
+        postedAt: new Date(job.created_at).toLocaleDateString()
+      })) as Job[]
+    }
+  } catch (err: any) {
+    console.error('Error fetching jobs:', err)
+    error.value = 'Error al cargar los empleos. Por favor intenta más tarde.'
+  } finally {
+    isLoading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchJobs()
+})
 
 const filteredJobs = computed(() => {
   let result = jobs.value
@@ -188,35 +191,36 @@ const filteredJobs = computed(() => {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(
       (job) =>
-        job.title.toLowerCase().includes(query) ||
-        job.company.toLowerCase().includes(query) ||
-        job.description.toLowerCase().includes(query)
+        job.title?.toLowerCase().includes(query) ||
+        job.company?.toLowerCase().includes(query) ||
+        job.description?.toLowerCase().includes(query)
     )
   }
 
   // Type filter
   if (filters.value.type) {
-    result = result.filter((job) => job.type.toLowerCase().includes(filters.value.type))
+    result = result.filter((job) => job.type?.toLowerCase().includes(filters.value.type))
   }
 
   // Location filter
   if (filters.value.location) {
-    result = result.filter((job) => job.location.toLowerCase().includes(filters.value.location))
+    result = result.filter((job) => job.location?.toLowerCase().includes(filters.value.location))
   }
 
   return result
 })
 
 const handleSearch = () => {
-  // Debounce search if needed
+  // Ya es reactivo con computed, pero podríamos añadir debounce aquí
 }
 
 const handleFilterChange = () => {
-  // Apply filters
+  // Reactivo automágicamente
 }
 
 const handleSort = () => {
-  // Sort jobs
+  // Implementar lógica de sort si es necesaria del lado del cliente
+  // O hacer nueva petición a Supabase con .order() diferente
 }
 </script>
 
