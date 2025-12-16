@@ -1,47 +1,5 @@
 import { apiClient } from '@/config/api'
-
-/**
- * Jobs Service
- * Handles all job-related API calls
- */
-
-export interface Job {
-    id: string
-    title: string
-    description: string
-    company: string
-    location: string
-    type: 'full-time' | 'part-time' | 'contract' | 'remote'
-    salary: string
-    skills: string[]
-    requirements: string[]
-    benefits: string[]
-    postedAt: string
-    expiresAt: string
-    isActive: boolean
-}
-
-export interface JobFilters {
-    search?: string
-    type?: string
-    location?: string
-    experience?: string
-    skills?: string[]
-    salaryMin?: number
-    salaryMax?: number
-}
-
-export interface CreateJobDto {
-    title: string
-    description: string
-    company: string
-    location: string
-    type: string
-    salary: string
-    skills: string[]
-    requirements: string[]
-    benefits: string[]
-}
+import type { Job, CreateJobDto, JobFilters } from '@/types/job'
 
 export const jobsService = {
     /**

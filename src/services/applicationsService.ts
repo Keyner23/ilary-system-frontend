@@ -1,72 +1,40 @@
 import { apiClient } from '@/config/api'
-
-/**
- * Applications Service
- * Handles all job application-related API calls
- */
-
-export interface Application {
-    id: string
-    jobId: string
-    jobTitle: string
-    company: string
-    status: 'pending' | 'reviewing' | 'interview' | 'accepted' | 'rejected'
-    coverLetter?: string
-    appliedAt: string
-    updatedAt: string
-}
-
-export interface ApplicationStats {
-    total: number
-    pending: number
-    reviewing: number
-    interview: number
-    accepted: number
-    rejected: number
-}
+import type { JobApplication, CreateJobApplicationDto } from '@/types/jobApplication'
 
 export const applicationsService = {
     /**
-     * Get all applications for the current user
+     * Create a new job application
      */
-    async getMyApplications(): Promise<Application[]> {
-        const response = await apiClient.get<Application[]>('/applications')
+    async create(data: CreateJobApplicationDto): Promise<void> {
+        await apiClient.post('/JobApplication', data)
+    },
+
+    // Keeping other methods as placeholders/legacy for now
+
+    async getMyApplications(): Promise<JobApplication[]> {
+        const response = await apiClient.get<JobApplication[]>('/applications')
         return response.data
     },
 
-    /**
-     * Get a single application by ID
-     */
-    async getById(id: string): Promise<Application> {
-        const response = await apiClient.get<Application>(`/applications/${id}`)
+    async getById(id: string): Promise<JobApplication> {
+        const response = await apiClient.get<JobApplication>(`/applications/${id}`)
         return response.data
     },
 
-    /**
-     * Withdraw an application
-     */
     async withdraw(id: string): Promise<void> {
         await apiClient.delete(`/applications/${id}`)
     },
 
-    /**
-     * Get application statistics
-     */
-    async getStats(): Promise<ApplicationStats> {
-        const response = await apiClient.get<ApplicationStats>('/applications/stats')
+    async getStats(): Promise<any> {
+        const response = await apiClient.get('/applications/stats')
         return response.data
     },
 
-    /**
-     * Update application status (recruiter only)
-     */
-    async updateStatus(
-        id: string,
-        status: Application['status']
-    ): Promise<Application> {
-        const response = await apiClient.patch<Application>(`/applications/${id}/status`, {
+    async updateStatus(id: string, status: string): Promise<JobApplication> {
+        const response = await apiClient.patch<JobApplication>(`/applications/${id}/status`, {
             status
         })
         return response.data
     }
 }
+

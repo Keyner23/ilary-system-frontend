@@ -20,6 +20,10 @@ export interface RegisterData {
     email: string
     password: string
     role?: string
+    document?: string
+    phoneNumber?: string
+    description?: string
+    nit?: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -52,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
         error.value = null
 
         try {
-            const response = await apiClient.post('/auth/login', credentials)
+            const response = await apiClient.post('/Auth/login', credentials)
             const { token: authToken, user: userData } = response.data
 
             token.value = authToken
@@ -63,7 +67,17 @@ export const useAuthStore = defineStore('auth', () => {
 
             return true
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Login failed. Please try again.'
+            console.error('Login error:', err);
+            if (err.response) {
+                // Server responded with a status code outside 2xx
+                error.value = `Error ${err.response.status}: ${err.response.data?.message || err.message}`;
+            } else if (err.request) {
+                // Request was made but no response received
+                error.value = 'No response from server. Check if backend is running and CORS is configured.';
+            } else {
+                // Something happened in setting up the request
+                error.value = `Request error: ${err.message}`;
+            }
             return false
         } finally {
             isLoading.value = false
@@ -76,15 +90,18 @@ export const useAuthStore = defineStore('auth', () => {
         error.value = null
 
         try {
-            const response = await apiClient.post('/auth/register', data)
-            const { token: authToken, user: userData } = response.data
+            let endpoint = ''
+            if (data.role === 'recruiter') {
+                endpoint = '/Auth/register/company'
+            } else {
+                // Default to candidate/coder
+                endpoint = '/Auth/register/coder'
+            }
 
-            token.value = authToken
-            user.value = userData
-
-            localStorage.setItem('auth_token', authToken)
-            localStorage.setItem('user', JSON.stringify(userData))
-
+            const response = await apiClient.post(endpoint, data)
+            // Note: The backend register endpoints currently return a message, not the token/user.
+            // We might need to auto-login or redirect to login.
+            // For now, let's assume we redirect to login.
             return true
         } catch (err: any) {
             error.value = err.response?.data?.message || 'Registration failed. Please try again.'
@@ -93,6 +110,8 @@ export const useAuthStore = defineStore('auth', () => {
             isLoading.value = false
         }
     }
+
+
 
     // Logout
     const logout = () => {

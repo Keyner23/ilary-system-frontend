@@ -1,37 +1,29 @@
 import { apiClient } from '@/config/api'
-
-/**
- * Companies Service
- * Handles all company-related API calls
- */
-
-export interface Company {
-    id: string
-    name: string
-    description: string
-    industry: string
-    size: string
-    location: string
-    website?: string
-    logo?: string
-    openPositions: number
-    founded?: string
-}
+import type { Company, CreateCompanyDto } from '@/types/company'
 
 export const companiesService = {
     /**
      * Get all companies
      */
     async getAll(): Promise<Company[]> {
-        const response = await apiClient.get<Company[]>('/companies')
+        const response = await apiClient.get<Company[]>('/Company')
         return response.data
     },
 
     /**
+     * Create a new company
+     */
+    async create(data: CreateCompanyDto): Promise<void> {
+        await apiClient.post('/Company', data)
+    },
+
+    /**
      * Get a single company by ID
+     * Note: Not currently supported by backend
      */
     async getById(id: string): Promise<Company> {
-        const response = await apiClient.get<Company>(`/companies/${id}`)
+        // Placeholder or keep existing if it was working with a different backend
+        const response = await apiClient.get<Company>(`/Company/${id}`)
         return response.data
     },
 
@@ -53,3 +45,4 @@ export const companiesService = {
         return response.data
     }
 }
+
